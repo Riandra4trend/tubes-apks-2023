@@ -57,6 +57,97 @@ services:
         reservations:
           cpus: "0.5"
           memory: 512M
+  version: '3'
+  services:
+    k6:
+      container_name: cinema-plus-k6
+      build: .
+      restart: unless-stopped
+      env_file: ./.env
+      ports:
+        - $K6_PORT:$K6_PORT
+      environment:
+        - DB_HOST=mongodb
+        - DB_USER=$MONGODB_USER
+        - DB_PASSWORD=$MONGODB_PASSWORD
+        - DB_NAME=$MONGODB_DATABASE
+        - DB_PORT=$MONGODB_PORT
+      deploy:
+        resources:
+          limits:
+            cpus: "1"
+            memory: 1024M
+          reservations:
+            cpus: "0.5"
+            memory: 512M
+
+    jmeter:
+      container_name: cinema-plus-jmeter
+      # Konfigurasi khusus untuk JMeter
+      build:
+        context: .
+        dockerfile: Dockerfile.jmeter
+      restart: unless-stopped
+      env_file: ./.env
+      ports:
+        - $JMETER_PORT:$JMETER_PORT
+      environment:
+        - JMETER_HOST=mongodb
+        - JMETER_USER=$MONGODB_USER
+        - JMETER_PASSWORD=$MONGODB_PASSWORD
+        - JMETER_DATABASE=$MONGODB_DATABASE
+        - JMETER_PORT=$MONGODB_PORT
+      deploy:
+        resources:
+          limits:
+            cpus: "1"
+            memory: 1024M
+          reservations:
+            cpus: "0.5"
+            memory: 512M
+
+    gatling:
+      container_name: cinema-plus-gatling
+      # Konfigurasi khusus untuk Gatling
+      build:
+        context: .
+        dockerfile: Dockerfile.gatling
+      restart: unless-stopped
+      env_file: ./.env
+      ports:
+        - $GATLING_PORT:$GATLING_PORT
+      environment:
+        - GATLING_HOST=mongodb
+        - GATLING_USER=$MONGODB_USER
+        - GATLING_PASSWORD=$MONGODB_PASSWORD
+        - GATLING_DATABASE=$MONGODB_DATABASE
+        - GATLING_PORT=$MONGODB_PORT
+      deploy:
+        resources:
+          limits:
+            cpus: "1"
+            memory: 1024M
+          reservations:
+            cpus: "0.5"
+            memory: 512M
+
+    prometheus:
+      container_name: cinema-plus-prometheus
+      # Konfigurasi khusus untuk Prometheus
+      build:
+        context: .
+        dockerfile: Dockerfile.prometheus
+      restart: unless-stopped
+      ports:
+        - $PROMETHEUS_PORT:$PROMETHEUS_PORT
+      deploy:
+        resources:
+          limits:
+            cpus: "1"
+            memory: 1024M
+          reservations:
+            cpus: "0.5"
+            memory: 512M
 
 volumes:
   db:
