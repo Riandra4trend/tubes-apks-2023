@@ -42,7 +42,7 @@ const userSchema = Schema(
     },
     role: {
       type: String,
-      default: 'guest',
+      // default: 'guest',
       enum: ['guest', 'admin', 'superadmin'],
     },
 
