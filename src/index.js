@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require("express");
 const path = require("path");
 const connectDB = require("./db/mongoose");
+const apiMetrics = require('prometheus-api-metrics');
 
 const app = express();
 
@@ -47,6 +48,8 @@ const start = async () => {
 			next();
 		});
 		app.use(express.json());
+		app.use(apiMetrics());
+		
 		app.use(userRouter);
 		app.use(movieRouter);
 		app.use(cinemaRouter);
