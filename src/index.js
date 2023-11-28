@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require("express");
 const path = require("path");
 const connectDB = require("./db/mongoose");
+const apiMetrics = require('prometheus-api-metrics');
 
 const app = express();
 
@@ -22,7 +23,7 @@ const start = async () => {
 		const invitationsRouter = require("./routes/invitations");
 
 		app.disable("x-powered-by");
-		const port = process.env.PORT || 8080;
+		const port = process.env.APP_PORT ;
 
 		// Serve static files from the React app
 		app.use(express.static(path.join(__dirname, "../../client/build")));
@@ -47,6 +48,8 @@ const start = async () => {
 			next();
 		});
 		app.use(express.json());
+		app.use(apiMetrics());
+		
 		app.use(userRouter);
 		app.use(movieRouter);
 		app.use(cinemaRouter);
@@ -63,7 +66,7 @@ const start = async () => {
 		app.get("/*", (req, res) => {
 			res.status(404).send({message : "path not found"});
 		});
-		app.listen(port, () => console.log(`app is running in PORT: ${port}`));
+		app.listen(port, () => console.log(`aan is running in PORT: ${port}`));
 	} catch (err) {
 		console.log(err);
 		app.get("/health", (req, res) => {
