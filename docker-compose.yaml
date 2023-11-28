@@ -6,13 +6,11 @@ services:
     restart: always
     env_file: ./.env
     ports:
-      - 8082:8081
+      - 8081:8081
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGODB_USER}
-      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGODB_PASSWORD}
-      ME_CONFIG_BASICAUTH_USERNAME: ${MONGODB_USER}
-      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGODB_PASSWORD}
-      ME_CONFIG_MONGODB_URL: mongodb://${MONGODB_USER}:${MONGODB_PASSWORD}@mongodb:27017/${MONGODB_DATABASE}?authSource=admin
+      ME_CONFIG_MONGODB_ADMINUSERNAME: $MONGODB_USER
+      ME_CONFIG_MONGODB_ADMINPASSWORD: $MONGODB_PASSWORD
+      ME_CONFIG_MONGODB_URL: mongodb://$MONGODB_USER:$MONGODB_PASSWORD@mongodb:27017/$MONGODB_DATABASE?authSource=admin
       ME_CONFIG_MONGODB_SERVER: mongodb
   mongodb:
     container_name: cinema-plus-mongodb
@@ -42,7 +40,7 @@ services:
     restart: unless-stopped
     env_file: ./.env
     ports:
-      - $APP_PORT:$APP_PORT
+      - $PORT:$PORT
     environment:
       - DB_HOST=mongodb
       - DB_USER=$MONGODB_USER
@@ -57,32 +55,27 @@ services:
         reservations:
           cpus: "0.5"
           memory: 512M
-  
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
     ports:
       - 9090:9090
-    command: [ '--config.file=/usr/src/app/prometheus.yml']
+    command: "--config.file=/usr/src/app/prometheus.yaml"
     volumes:
-      - ./prometheus.yml:/usr/src/app/prometheus.yaml :ro
-      - ./prometheus_data:/prometheus
+      - ./prometheus.yaml:/usr/src/app/prometheus.yaml:ro
+      - ./prometheus-data:/prometheus
     restart: unless-stopped
-
   grafana:
     image: grafana/grafana-oss:latest
     container_name: grafana
     ports:
-      - 3000:3000
+      - "3002:3002"
     volumes:
-      - ./grafana_data:/var/lib/grafana
+      - grafana-data:/var/lib/grafana
     restart: unless-stopped
 volumes:
   db:
-  prometheus_data:
-   driver : local
-  grafana_data:
-   driver : local
-
-
-    
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
